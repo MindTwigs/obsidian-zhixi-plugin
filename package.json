@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
-	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"name": "obsidian-zhixi-plugin",
+	"version": "0.3.0",
+	"description": "This is a zhixi plugin for Obsidian (https://obsidian.md)",
 	"main": "main.js",
 	"type": "module",
 	"scripts": {
@@ -14,6 +14,7 @@
 	"license": "0-BSD",
 	"devDependencies": {
 		"@types/node": "^16.11.6",
+		"electron": "^32.2.0",
 		"esbuild": "0.25.5",
 		"eslint-plugin-obsidianmd": "0.1.9",
 		"globals": "14.0.0",

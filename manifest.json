@@ -1,11 +1,10 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
-	"version": "1.0.0",
+	"id": "zhixi-mindmap",
+	"name": "知犀思维导图",
+	"version": "0.3.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
-	"isDesktopOnly": false
+	"description": "Zhixi is a full-platform mind mapping software. It is easy to use and has a fresh and clear interface.",
+	"author": "Zhixi",
+	"authorUrl": "https://www.zhixi.com",
+	"isDesktopOnly": true
 }

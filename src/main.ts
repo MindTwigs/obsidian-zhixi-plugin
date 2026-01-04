@@ -1,99 +1,98 @@
-import {App, Editor, MarkdownView, Modal, Notice, Plugin} from 'obsidian';
-import {DEFAULT_SETTINGS, MyPluginSettings, SampleSettingTab} from "./settings";
+import { addIcon, App, Plugin, ViewStateResult } from "obsidian";
+import { MyWebView, TAB_HOME, TAB_PAGE } from "view";
 
-// Remember to rename these classes and interfaces!
+function goHome(app: App) {
+	const workspace = app.workspace;
+	const tabs = workspace.getLeavesOfType(TAB_HOME);
+	for (const tab of tabs) {
+		workspace.setActiveLeaf(tab, { focus: true });
+		return;
+	}
+	const tab = workspace.getLeaf(true);
+	void tab.setViewState({
+		type: TAB_HOME,
+		active: true,
+	});
+}
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
-
-	async onload() {
-		await this.loadSettings();
-
-		// This creates an icon in the left ribbon.
-		this.addRibbonIcon('dice', 'Sample', (evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
+export default class ZhixiPlugin extends Plugin {
+	onload() {
+		addIcon(
+			"iconZhixi",
+			`<path fill="currentColor"
+				d="M18.76 25.04C19.12 25.34 19.04 25.78 18.95 26.04L18.88 26.22C15.9 32.14 14.79 37.26 15.53 41.6C16.61 41.59 17.71 41.5 18.84 41.34C25.08 48.81 35.53 55.26 48.64 59.77C51.8 54.56 53.7 48.38 54.32 41.22L54.46 39.43L54.52 38.95C54.61 38.38 54.79 37.82 55.24 37.71C55.81 37.57 56.29 38.16 56.63 38.72L56.83 39.08L56.91 39.24C59.83 44.58 60.97 52.53 60.34 63.09C62.31 63.54 64.32 63.95 66.37 64.32C69.7 57.35 70.46 47.42 67.49 33.82L67.18 32.43L67.05 31.91L66.94 31.39C66.84 30.79 66.83 30.27 67.14 30.07C67.68 29.68 68.97 30.6 69.85 31.62C73.93 36.63 76.46 41.08 78.73 46.7L79.18 47.84C81.59 53.75 82.74 59.54 82.64 65.22L82.6 66.28L82.56 67.02L82.51 67.84L82.4 69.2L82.3 70.2L82.14 71.54L81.93 72.97L81.72 74.18C81.68 74.38 81.64 74.59 81.6 74.8L81.34 76.07C79.64 83.81 75.67 93.68 66.23 100C51.73 109.3 36.58 110.78 20.78 104.47L17.9 109.5C5.53 104.48 -3.43 94.65 -9.01 80.01C-13.45 63.28 -11.84 49.53 -4.2 38.67L-3.73 38.03L-3.15 37.29L-2.47 36.46L-1.69 35.53L-0.8 34.51C-0.64 34.33 -0.48 34.15 -0.32 33.96C0.99 35.36 2.48 36.53 4.06 37.47L4.93 35.97L5.33 35.31L5.78 34.6L6.28 33.84C8.23 30.98 11.42 27.31 17.13 23.95L17.39 23.83C17.7 23.7 18.16 23.57 18.48 23.88L18.76 25.04ZM34.86 70.53C32.29 71.36 30.89 74.13 31.73 76.71C32.57 79.29 35.33 80.71 37.91 79.88C40.49 79.05 41.89 76.28 41.05 73.7C40.21 71.12 37.45 69.7 34.86 70.53Z"
+				transform="translate(50, 50) scale(0.85) translate(-37.5, -60)"
+			></path>`,
+		);
+		this.addRibbonIcon("iconZhixi", "知犀", () => {
+			goHome(this.app);
 		});
-
-		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText('Status bar text');
-
-		// This adds a simple command that can be triggered anywhere
-		this.addCommand({
-			id: 'open-modal-simple',
-			name: 'Open modal (simple)',
-			callback: () => {
-				new SampleModal(this.app).open();
-			}
-		});
-		// This adds an editor command that can perform some operation on the current editor instance
-		this.addCommand({
-			id: 'replace-selected',
-			name: 'Replace selected content',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				editor.replaceSelection('Sample editor command');
-			}
-		});
-		// This adds a complex command that can check whether the current state of the app allows execution of the command
-		this.addCommand({
-			id: 'open-modal-complex',
-			name: 'Open modal (complex)',
-			checkCallback: (checking: boolean) => {
-				// Conditions to check
-				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
-				if (markdownView) {
-					// If checking is true, we're simply "checking" if the command can be run.
-					// If checking is false, then we want to actually perform the operation.
-					if (!checking) {
-						new SampleModal(this.app).open();
-					}
-
-					// This command will only show up in Command Palette when the check function returns true
-					return true;
-				}
-				return false;
-			}
-		});
-
-		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
-
-		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-		// Using this function will automatically remove the event listener when this plugin is disabled.
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-			new Notice("Click");
-		});
-
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
-
+		this.registerView(TAB_HOME, (leaf) => new HomeView(leaf));
+		this.registerView(TAB_PAGE, (leaf) => new PageView(leaf));
 	}
 
 	onunload() {
-	}
-
-	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData() as Partial<MyPluginSettings>);
-	}
-
-	async saveSettings() {
-		await this.saveData(this.settings);
+		console.warn("unloading ZhixiPlugin");
+		// this.app.workspace.detachLeavesOfType(TAB_PAGE);
+		// this.app.workspace.detachLeavesOfType(TAB_HOME);
 	}
 }
 
-class SampleModal extends Modal {
-	constructor(app: App) {
-		super(app);
+class HomeView extends MyWebView {
+	getViewType(): string {
+		return TAB_HOME;
 	}
-
-	onOpen() {
-		let {contentEl} = this;
-		contentEl.setText('Woah!');
+	getDisplayText(): string {
+		return "知犀思维导图";
 	}
+	onOpen(): Promise<void> {
+		const page = this.webview(TAB_HOME);
+		page.src = this.origin + "/space?page=owner#app=obsidian";
 
-	onClose() {
-		const {contentEl} = this;
-		contentEl.empty();
+		return Promise.resolve();
+	}
+}
+class PageView extends MyWebView {
+	url?: string;
+	title = "知犀";
+
+	getViewType(): string {
+		return TAB_PAGE;
+	}
+	getDisplayText(): string {
+		return this.title;
+	}
+	getState(): Record<string, unknown> {
+		const state = super.getState();
+		state.url = this.url;
+		return state;
+	}
+	async setState(state: { url?: string }, result: ViewStateResult) {
+		if (!state.url) return;
+		const reHome = new RegExp(`^${this.origin}(/desktop)?/space`);
+		const page = this.webview(TAB_PAGE);
+
+		page.addEventListener("page-title-updated", (e: { title: string }) => {
+			this.title = e.title;
+			if ("titleEl" in this) {
+				const { titleEl } = this as unknown as {
+					titleEl: { setText(t: string): void };
+				};
+				const leaf = this.leaf as unknown as { updateHeader(): void };
+				titleEl.setText(this.title);
+				leaf.updateHeader();
+			}
+		});
+		page.addEventListener("will-navigate", (e: { url: string }) => {
+			if (reHome.test(e.url)) {
+				page.stop(); // 返回文件列表
+				this.leaf.detach();
+				return goHome(this.app);
+			}
+			this.url = e.url;
+		});
+		page.src = this.url = state.url;
+
+		return super.setState(state, result);
 	}
 }
